@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026: The Convergence Horizon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --bg-deep: #030305;
+            --glass-panel: rgba(25, 25, 35, 0.65); /* Darker glass for better mobile contrast */
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-pink: #ff0055;
+            --text-main: #ffffff;
+            --text-muted: #c0c0c0;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
+            --mobile-padding: 20px;
+        }
+
+        /* --- RESET & BASE --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            /* Mobile-optimized gradient background */
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(188, 19, 254, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 243, 255, 0.15) 0%, transparent 50%);
+            background-attachment: fixed; /* Keeps background static while scrolling */
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { font-family: var(--font-head); text-transform: uppercase; letter-spacing: 1px; line-height: 1.1; }
+        
+        h1 {
+            font-size: clamp(2.5rem, 10vw, 6rem); /* Responsive scaling */
+            font-weight: 900;
+            background: linear-gradient(to bottom right, #fff 30%, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(255,255,255,0.15);
+        }
+
+        h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+
+        p { 
+            font-size: 1.1rem; 
+            line-height: 1.6; 
+            color: var(--text-muted); 
+            margin-bottom: 1.5rem; 
+            font-weight: 500;
+        }
+
+        /* Highlights */
+        .highlight-blue { color: var(--neon-blue); text-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
+        .highlight-purple { color: var(--neon-purple); text-shadow: 0 0 15px rgba(188, 19, 254, 0.4); }
+        .highlight-pink { color: var(--neon-pink); text-shadow: 0 0 15px rgba(255, 0, 85, 0.4); }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container { 
+            width: 100%; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 0 var(--mobile-padding); 
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 100vh; /* Full viewport height */
+            height: 100svh; /* Small viewport height for mobile browsers with URL bars */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        .hero-badge {
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-family: var(--font-head);
+            margin-bottom: 20px;
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+
+        /* Animated Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            width: 30px;
+            height: 50px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            padding-top: 10px;
+        }
+        
+        .scroll-dot {
+            width: 4px;
+            height: 8px;
+            background: #fff;
+            border-radius: 4px;
+            animation: scroll-anim 1.5s infinite ease-in-out;
+        }
+
+        @keyframes scroll-anim {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(20px); opacity: 0; }
+        }
+
+        /* --- TECH CARDS (Responsive Grid) --- */
+        .card-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 80px; /* Space between cards */
+            padding-bottom: 100px;
+        }
+
+        .tech-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Desktop: Side by Side */
+            gap: 40px;
+            background: var(--glass-panel);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, opacity 0.5s ease;
+            opacity: 0; /* Hidden initially for scroll animation */
+            transform: translateY(30px);
+        }
+
+        .tech-card.visible { opacity: 1; transform: translateY(0); }
+
+        /* Image Area */
+        .card-visual {
+            position: relative;
+            height: 100%;
+            min-height: 300px;
+            overflow: hidden;
+        }
+
+        .card-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .tech-card:hover .card-visual img { transform: scale(1.05); }
+
+        .visual-overlay {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-family: var(--font-head);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 2;
+        }
+
+        /* Content Area */
+        .card-content {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Large Number Behind Text */
+        .bg-number {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 6rem;
+            font-family: var(--font-head);
+            font-weight: 900;
+            color: rgba(255,255,255,0.03);
+            pointer-events: none;
+            line-height: 0.8;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .data-item span { display: block; }
+        .data-label { font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 1px; }
+        .data-value { font-size: 1.1rem; font-weight: 700; color: #fff; }
+
+        /* --- MOBILE BREAKPOINTS (The "Super Responsive" Part) --- */
+        @media (max-width: 900px) {
+            .card-stack { gap: 40px; }
+            
+            .tech-card {
+                grid-template-columns: 1fr; /* Stack vertically */
+                border-radius: 20px;
+            }
+
+            .card-visual {
+                height: 250px; /* Fixed height for mobile images */
+                min-height: auto;
+            }
+
+            .card-content {
+                padding: 25px; /* Less padding on mobile */
+            }
+
+            h2 { font-size: 1.5rem; }
+            
+            .bg-number { font-size: 4rem; top: 10px; right: 15px; }
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid var(--glass-border);
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-badge">STATE OF THE FUTURE &bull; 2026</div>
+        <h1>THE GREAT<br><span class="highlight-purple">CONVERGENCE</span></h1>
+        <p style="max-width: 500px; margin: 0 auto 30px;">
+            We are moving from a society that <em>uses</em> technology to one that is physically <em>re-architected</em> by it.
+        </p>
+        <div class="scroll-indicator">
+            <div class="scroll-dot"></div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <div class="card-stack">
+
+            <!-- CARD 1: NEURALINK -->
+            <article class="tech-card">
+                <div class="card-visual">
+                    <div class="visual-overlay">HUMAN TRIALS 2026</div>
+                    <!-- Replace with neural interface image -->
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop" alt="Neural Interface">
+                </div>
+                <div class="card-content">
+                    <div class="bg-number">01</div>
+                    <h2 class="highlight-blue">Neuralink Blindsight</h2>
+                    <p>
+                        A direct cortical interface that bypasses the eye entirely. By stimulating the visual cortex, it offers sight to the blind and potential super-human vision in infrared and UV spectrums.
+                    </p>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">Milestone</span>
+                            <span class="data-value">FDA Breakthrough</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Capability</span>
+                            <span class="data-value">Digital Vision</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- CARD 2: SPACEX -->
+            <article class="tech-card">
+                <div class="card-visual">
+                    <div class="visual-overlay">V3 LAUNCH 2026</div>
+                    <!-- Replace with rocket image -->
+                    <img src="https://images.unsplash.com/photo-1541185933-710f50746747?q=80&w=2070&auto=format&fit=crop" alt="Starship Launch">
+                </div>
+                <div class="card-content">
+                    <div class="bg-number">02</div>
+                    <h2 class="highlight-purple">SpaceX Starship</h2>
+                    <p>
+                        The largest flying object in history. Starship V3 introduces orbital refueling, decoupling mission range from launch capacity. It turns LEO into a gas station for Mars.
+                    </p>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">Payload</span>
+                            <span class="data-value">200+ Tons</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Key Tech</span>
+                            <span class="data-value">Orbital Refill</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- CARD 3: TESLA OPTIMUS -->
+            <article class="tech-card">
+                <div class="card-visual">
+                    <div class="visual-overlay">REVEAL Q1 2026</div>
+                    <!-- Replace with robot hand image -->
+                    <img src="https://images.unsplash.com/photo-1535378437327-b7149236addf?q=80&w=2070&auto=format&fit=crop" alt="Robot Hand">
+                </div>
+                <div class="card-content">
+                    <div class="bg-number">03</div>
+                    <h2 class="highlight-pink">Tesla Optimus V3</h2>
+                    <p>
+                        The end of labor scarcity. V3 features 22-DoF hands for human-level dexterity. It learns by watching, not just coding, aiming for a $20k price point to revolutionize manufacturing.
+                    </p>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">Dexterity</span>
+                            <span class="data-value">22 DoF Hands</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Production</span>
+                            <span class="data-value">High Volume</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- CARD 4: JOBY / ARCHER -->
+            <article class="tech-card">
+                <div class="card-visual">
+                    <div class="visual-overlay">SERVICE 2026</div>
+                    <!-- Replace with drone/city image -->
+                    <img src="https://images.unsplash.com/photo-1473951574084-8d48404395ed?q=80&w=2071&auto=format&fit=crop" alt="Air Mobility">
+                </div>
+                <div class="card-content">
+                    <div class="bg-number">04</div>
+                    <h2 class="highlight-blue">Air Taxi Networks</h2>
+                    <p>
+                        Decoupling transit from the gridlocked ground. Joby and Archer are entering final FAA testing. These electric aircraft are 100x quieter than helicopters, blending into city noise.
+                    </p>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">Acoustics</span>
+                            <span class="data-value">45 dBA (Silent)</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Speed</span>
+                            <span class="data-value">200 MPH</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- CARD 5: HELION -->
+            <article class="tech-card">
+                <div class="card-visual">
+                    <div class="visual-overlay">GRID LIVE 2028</div>
+                    <!-- Replace with energy/plasma image -->
+                    <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2111&auto=format&fit=crop" alt="Fusion Energy">
+                </div>
+                <div class="card-content">
+                    <div class="bg-number">05</div>
+                    <h2 class="highlight-purple">Helion Fusion</h2>
+                    <p>
+                        Building the first commercial fusion plant in WA. Helion skips the steam turbine, capturing electricity directly from magnetic fields. Microsoft has already bought the first 50 MW.
+                    </p>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <span class="data-label">Customer</span>
+                            <span class="data-value">Microsoft</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">Tech</span>
+                            <span class="data-value">Direct Capture</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Future Intelligence Deck</p>
+    </footer>
+
+    <!-- SCROLL ANIMATION SCRIPT -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        });
+
+        document.querySelectorAll('.tech-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+  </html>
